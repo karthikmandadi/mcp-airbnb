@@ -1,0 +1,56 @@
+### Health Check
+GET http://localhost:5000/api/gateway/health
+
+### Services Status
+GET http://localhost:5000/api/gateway/services/status
+
+### Properties API through Gateway
+GET http://localhost:5001/api/properties
+
+### Create Property
+POST http://localhost:5001/api/properties
+Content-Type: application/json
+
+{
+    "id": "00000000-0000-0000-0000-000000000000",
+    "title": "Modern Downtown Loft",
+    "description": "Stylish loft in the heart of downtown with city views",
+    "address": "789 Urban Ave, Downtown",
+    "basePrice": 180.00,
+    "maxGuests": 4,
+    "bedrooms": 2,
+    "bathrooms": 1,
+    "amenities": ["WiFi", "Kitchen", "Gym", "Rooftop Access", "Parking"],
+    "status": 1,
+    "createdAt": "2024-01-01T00:00:00Z",
+    "updatedAt": "2024-01-01T00:00:00Z"
+}
+
+### Pricing Calculation
+POST http://localhost:5002/api/pricing/calculate
+Content-Type: application/json
+
+{
+    "propertyId": "12345678-1234-1234-1234-123456789012",
+    "checkInDate": "2024-07-15",
+    "checkOutDate": "2024-07-20",
+    "guestCount": 4,
+    "marketFactors": {
+        "high_demand": "true",
+        "local_events": "music_festival"
+    }
+}
+
+### AI Agent Processing
+POST http://localhost:5005/api/aiagent/process
+Content-Type: application/json
+
+{
+    "requestType": "property_optimization",
+    "context": {
+        "propertyId": "12345678-1234-1234-1234-123456789012",
+        "timeframe": "month"
+    },
+    "userQuery": "How can I optimize my property performance?",
+    "timestamp": "2024-06-20T00:00:00Z"
+}

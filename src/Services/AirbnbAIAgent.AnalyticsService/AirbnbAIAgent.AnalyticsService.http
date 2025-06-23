@@ -1,0 +1,6 @@
+@AirbnbAIAgent.AnalyticsService_HostAddress = http://localhost:5043
+
+GET {{AirbnbAIAgent.AnalyticsService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

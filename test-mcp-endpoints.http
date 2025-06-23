@@ -1,0 +1,99 @@
+### Test MCP Resources List
+GET http://localhost:5270/api/mcp/resources
+Content-Type: application/json
+
+###
+
+### Test MCP Tools List  
+GET http://localhost:5270/api/mcp/tools
+Content-Type: application/json
+
+###
+
+### Test Read Properties Resource
+GET http://localhost:5270/api/mcp/resources/read?resourceUri=airbnb://properties
+Content-Type: application/json
+
+###
+
+### Test Property Optimization Tool
+POST http://localhost:5270/api/mcp/tools/call
+Content-Type: application/json
+
+{
+  "toolName": "optimize_property_listing",
+  "arguments": {
+    "property_id": "123e4567-e89b-12d3-a456-426614174000",
+    "optimization_goals": ["pricing", "description", "amenities"]
+  }
+}
+
+###
+
+### Test Dynamic Pricing Tool
+POST http://localhost:5270/api/mcp/tools/call
+Content-Type: application/json
+
+{
+  "toolName": "calculate_dynamic_pricing",
+  "arguments": {
+    "property_id": "123e4567-e89b-12d3-a456-426614174000",
+    "check_in_date": "2025-07-15",
+    "check_out_date": "2025-07-18"
+  }
+}
+
+###
+
+### Test Guest Response Generator Tool
+POST http://localhost:5270/api/mcp/tools/call  
+Content-Type: application/json
+
+{
+  "toolName": "generate_guest_response",
+  "arguments": {
+    "guest_message": "Hi, I have a question about check-in procedures. What time can I arrive?",
+    "response_tone": "friendly"
+  }
+}
+
+###
+
+### Test Market Analysis Tool
+POST http://localhost:5270/api/mcp/tools/call
+Content-Type: application/json
+
+{
+  "toolName": "analyze_market_trends",
+  "arguments": {
+    "location": "San Francisco, CA",
+    "property_type": "apartment"
+  }
+}
+
+###
+
+### Test Performance Analytics Tool
+POST http://localhost:5270/api/mcp/tools/call
+Content-Type: application/json
+
+{
+  "toolName": "get_performance_analytics",
+  "arguments": {
+    "property_id": "123e4567-e89b-12d3-a456-426614174000",
+    "time_period": "30d",
+    "metrics": ["occupancy", "revenue", "rating"]
+  }
+}
+
+###
+
+### Test Comprehensive Analysis
+POST http://localhost:5270/api/mcp/analysis/comprehensive
+Content-Type: application/json
+
+{
+  "propertyId": "123e4567-e89b-12d3-a456-426614174000",
+  "timePeriod": "30d",
+  "metrics": ["occupancy", "revenue", "rating"]
+}

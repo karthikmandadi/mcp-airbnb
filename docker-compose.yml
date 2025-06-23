@@ -1,0 +1,143 @@
+version: '3.8'
+
+services:
+  # React Frontend Dashboard
+  frontend:
+    build:
+      context: ./src/Frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3001
+    depends_on:
+      - gateway
+    networks:
+      - airbnb-network
+
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.Gateway
+    ports:
+      - "5010:5010"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5010
+    depends_on:
+      - property-service
+      - pricing-service
+      - ai-agent-service
+      - guest-service
+      - analytics-service
+    networks:
+      - airbnb-network
+
+  property-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.PropertyService
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=AirbnbAI;Username=airbnb;Password=airbnb123
+    depends_on:
+      - postgres
+    networks:
+      - airbnb-network
+
+  pricing-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.PricingService
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5002
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=AirbnbAI;Username=airbnb;Password=airbnb123
+    depends_on:
+      - postgres
+    networks:
+      - airbnb-network
+
+  ai-agent-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.AIAgentService
+    ports:
+      - "5005:5005"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5005
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=AirbnbAI;Username=airbnb;Password=airbnb123
+    depends_on:
+      - postgres
+    networks:
+      - airbnb-network
+
+  guest-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.GuestService
+    ports:
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5003
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=AirbnbAI;Username=airbnb;Password=airbnb123
+    depends_on:
+      - postgres
+    networks:
+      - airbnb-network
+
+  analytics-service:
+    build:
+      context: .
+      dockerfile: Dockerfile.AnalyticsService
+    ports:
+      - "5004:5004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5004
+      - ConnectionStrings__DefaultConnection=Host=postgres;Port=5432;Database=AirbnbAI;Username=airbnb;Password=airbnb123
+    depends_on:
+      - postgres
+    networks:
+      - airbnb-network
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - "5433:5432"
+    environment:
+      - POSTGRES_DB=AirbnbAI
+      - POSTGRES_USER=airbnb
+      - POSTGRES_PASSWORD=airbnb123
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - airbnb-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+    networks:
+      - airbnb-network
+
+networks:
+  airbnb-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:

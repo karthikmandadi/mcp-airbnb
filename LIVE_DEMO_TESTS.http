@@ -1,0 +1,209 @@
+### AI-Powered Airbnb System - Live Demo Tests
+### Services Running:
+### - AI Agent Service: http://localhost:5270
+### - Property Service: http://localhost:5144
+
+### ==============================================
+### HEALTH CHECKS - Verify Services Are Running
+### ==============================================
+
+### AI Agent Service Health Check
+GET http://localhost:5270/api/aiagent/health
+
+### Property Service Health Check  
+GET http://localhost:5144/api/properties/health
+
+### ==============================================
+### REAL AI INTEGRATION TESTS
+### ==============================================
+
+### Test 1: General AI Query (No OpenAI Key Required for Demo)
+POST http://localhost:5270/api/aiagent/process
+Content-Type: application/json
+
+{
+  "requestType": "general",
+  "context": {
+    "topic": "property management"
+  },
+  "userQuery": "What are the key factors for successful Airbnb property management?",
+  "timestamp": "2025-06-20T10:00:00Z"
+}
+
+### Test 2: Property Optimization (Requires OpenAI Key)
+POST http://localhost:5270/api/aiagent/optimize-property
+Content-Type: application/json
+
+{
+  "propertyId": "123e4567-e89b-12d3-a456-426614174000",
+  "currentTitle": "Nice Apartment",
+  "currentDescription": "A good place to stay",
+  "currentAmenities": ["WiFi", "Kitchen"],
+  "marketData": {
+    "location": "Downtown",
+    "averagePrice": 150,
+    "occupancyRate": 0.75
+  }
+}
+
+### Test 3: AI Pricing Strategy (Requires OpenAI Key)
+POST http://localhost:5270/api/aiagent/pricing-strategy
+Content-Type: application/json
+
+{
+  "propertyId": "123e4567-e89b-12d3-a456-426614174000",
+  "checkInDate": "2025-07-15T00:00:00Z",
+  "checkOutDate": "2025-07-20T00:00:00Z",
+  "guestCount": 2,
+  "marketFactors": {
+    "seasonality": "high",
+    "localEvents": ["music festival"],
+    "demand": "high"
+  }
+}
+
+### Test 4: AI Guest Communication (Requires OpenAI Key)
+POST http://localhost:5270/api/aiagent/guest-communication
+Content-Type: application/json
+
+{
+  "bookingId": "123e4567-e89b-12d3-a456-426614174001",
+  "guestMessage": "Hi, I'm arriving late tonight around 11 PM. Is that okay?",
+  "communicationType": "check-in",
+  "context": {
+    "propertyType": "apartment",
+    "checkInTime": "15:00",
+    "hasKeybox": true
+  }
+}
+
+### ==============================================
+### DATABASE INTEGRATION TESTS
+### ==============================================
+
+### Test 5: Get All Properties (Works without database)
+GET http://localhost:5144/api/properties
+
+### Test 6: Create New Property (Database Integration)
+POST http://localhost:5144/api/properties
+Content-Type: application/json
+
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "title": "Luxury AI-Optimized Loft",
+  "description": "Modern downtown loft with AI-powered amenities and smart home features. Perfect for tech-savvy travelers.",
+  "address": "123 Innovation Drive, Tech District",
+  "basePrice": 250.00,
+  "maxGuests": 4,
+  "bedrooms": 2,
+  "bathrooms": 2,
+  "amenities": ["WiFi", "Smart Home", "Kitchen", "Gym", "Rooftop", "Parking"],
+  "status": "Active",
+  "createdAt": "2025-06-20T10:00:00Z",
+  "updatedAt": "2025-06-20T10:00:00Z"
+}
+
+### Test 7: Get Property with Filtering
+GET http://localhost:5144/api/properties?page=1&pageSize=10&status=Active
+
+### Test 8: Get AI Interaction History
+GET http://localhost:5270/api/aiagent/interactions?limit=10
+
+### Test 9: Get AI Analytics
+GET http://localhost:5270/api/aiagent/analytics
+
+### ==============================================
+### ADVANCED WORKFLOW TESTS
+### ==============================================
+
+### Test 10: Complete AI-Powered Workflow
+# Step 1: Create a property
+POST http://localhost:5144/api/properties
+Content-Type: application/json
+
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "title": "Beach House Paradise",
+  "description": "Stunning beachfront house with ocean views",
+  "address": "789 Ocean Boulevard, Coastal City",
+  "basePrice": 300.00,
+  "maxGuests": 8,
+  "bedrooms": 4,
+  "bathrooms": 3,
+  "amenities": ["WiFi", "Beach Access", "Pool", "BBQ", "Parking"],
+  "status": "Active",
+  "createdAt": "2025-06-20T10:00:00Z",
+  "updatedAt": "2025-06-20T10:00:00Z"
+}
+
+### Test 11: Market Analysis Request
+POST http://localhost:5270/api/aiagent/market-analysis
+Content-Type: application/json
+
+{
+  "location": "Coastal City",
+  "startDate": "2025-07-01T00:00:00Z",
+  "endDate": "2025-07-31T00:00:00Z",
+  "propertyType": "House",
+  "filters": {
+    "beachAccess": true,
+    "bedrooms": 4
+  }
+}
+
+### ==============================================
+### ERROR HANDLING TESTS
+### ==============================================
+
+### Test 12: Invalid Property ID
+GET http://localhost:5144/api/properties/invalid-id
+
+### Test 13: Missing Required Fields
+POST http://localhost:5144/api/properties
+Content-Type: application/json
+
+{
+  "title": "Incomplete Property"
+}
+
+### Test 14: Invalid AI Request
+POST http://localhost:5270/api/aiagent/process
+Content-Type: application/json
+
+{
+  "requestType": "invalid_type",
+  "context": {},
+  "userQuery": "",
+  "timestamp": "invalid-date"
+}
+
+### ==============================================
+### SWAGGER UI ACCESS
+### ==============================================
+
+### AI Agent Service Swagger
+### http://localhost:5270/swagger
+
+### Property Service Swagger  
+### http://localhost:5144/swagger
+
+### ==============================================
+### SETUP NOTES
+### ==============================================
+
+### To enable full AI functionality:
+### 1. Add your OpenAI API key to appsettings.Development.json:
+###    "OpenAI": { "ApiKey": "your-key-here" }
+### 2. For database functionality on macOS/Linux:
+###    - Install SQL Server Docker or use SQLite
+###    - Update connection string in appsettings.json
+### 3. All health checks and basic functionality work without additional setup
+
+### Current Status:
+### ✅ Services are running and responsive
+### ✅ AI service architecture is complete
+### ✅ Database integration is implemented
+### ✅ Error handling is functional
+### ✅ Swagger documentation is available
+### ⚠️  Database requires SQL Server (LocalDB not supported on macOS)
+### ⚠️  OpenAI API key required for full AI functionality

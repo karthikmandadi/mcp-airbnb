@@ -1,0 +1,22 @@
+# Dockerfile for Property Service
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 5001
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["src/Services/AirbnbAIAgent.PropertyService/AirbnbAIAgent.PropertyService.csproj", "src/Services/AirbnbAIAgent.PropertyService/"]
+COPY ["src/Shared/AirbnbAIAgent.Shared/AirbnbAIAgent.Shared.csproj", "src/Shared/AirbnbAIAgent.Shared/"]
+COPY ["src/Infrastructure/AirbnbAIAgent.Infrastructure/AirbnbAIAgent.Infrastructure.csproj", "src/Infrastructure/AirbnbAIAgent.Infrastructure/"]
+RUN dotnet restore "src/Services/AirbnbAIAgent.PropertyService/AirbnbAIAgent.PropertyService.csproj"
+COPY . .
+WORKDIR "/src/src/Services/AirbnbAIAgent.PropertyService"
+RUN dotnet build "AirbnbAIAgent.PropertyService.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "AirbnbAIAgent.PropertyService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AirbnbAIAgent.PropertyService.dll"]

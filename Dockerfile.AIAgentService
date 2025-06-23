@@ -1,0 +1,23 @@
+# Dockerfile for AI Agent Service
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 5005
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["src/Services/AirbnbAIAgent.AIAgentService/AirbnbAIAgent.AIAgentService.csproj", "src/Services/AirbnbAIAgent.AIAgentService/"]
+COPY ["src/Shared/AirbnbAIAgent.Shared/AirbnbAIAgent.Shared.csproj", "src/Shared/AirbnbAIAgent.Shared/"]
+COPY ["src/Infrastructure/AirbnbAIAgent.Infrastructure/AirbnbAIAgent.Infrastructure.csproj", "src/Infrastructure/AirbnbAIAgent.Infrastructure/"]
+COPY ["src/Infrastructure/AirbnbAIAgent.MCP/AirbnbAIAgent.MCP.csproj", "src/Infrastructure/AirbnbAIAgent.MCP/"]
+RUN dotnet restore "src/Services/AirbnbAIAgent.AIAgentService/AirbnbAIAgent.AIAgentService.csproj"
+COPY . .
+WORKDIR "/src/src/Services/AirbnbAIAgent.AIAgentService"
+RUN dotnet build "AirbnbAIAgent.AIAgentService.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "AirbnbAIAgent.AIAgentService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "AirbnbAIAgent.AIAgentService.dll"]

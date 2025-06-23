@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend API Test</title>
+</head>
+<body>
+    <h1>Testing Frontend API Connection</h1>
+    <div id="status">Testing...</div>
+    <div id="properties"></div>
+
+    <script>
+        async function testAPI() {
+            const statusDiv = document.getElementById('status');
+            const propertiesDiv = document.getElementById('properties');
+            
+            try {
+                // Test the API call that the React app would make
+                const response = await fetch('http://localhost:3000/api/properties');
+                
+                if (response.ok) {
+                    const properties = await response.json();
+                    statusDiv.innerHTML = `<span style="color: green;">✓ API Connection Successful! Found ${properties.length} properties</span>`;
+                    propertiesDiv.innerHTML = '<h2>Properties:</h2><pre>' + JSON.stringify(properties, null, 2) + '</pre>';
+                } else {
+                    statusDiv.innerHTML = `<span style="color: red;">✗ API Error: ${response.status} - ${response.statusText}</span>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<span style="color: red;">✗ Connection Error: ${error.message}</span>`;
+                
+                // Try direct gateway connection
+                try {
+                    const directResponse = await fetch('http://localhost:5010/api/properties');
+                    if (directResponse.ok) {
+                        const properties = await directResponse.json();
+                        statusDiv.innerHTML += `<br><span style="color: orange;">⚠ Frontend proxy not working, but direct gateway works. Found ${properties.length} properties</span>`;
+                    }
+                } catch (directError) {
+                    statusDiv.innerHTML += `<br><span style="color: red;">✗ Direct gateway also failed: ${directError.message}</span>`;
+                }
+            }
+        }
+        
+        testAPI();
+    </script>
+</body>
+</html>
